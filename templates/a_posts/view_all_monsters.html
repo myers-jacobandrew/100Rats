@@ -1,0 +1,47 @@
+{% extends 'layouts/b.html' %}
+
+{% block content %}
+  <h1 class="font1 text-center text-4xl mb-6">All Monsters</h1>
+  
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+    {% for monster in monsters %}
+      <div class="bg-white p-4 rounded-md shadow-md">
+        <h2 class="text-xl font-bold mb-2">{{ monster.name }}</h2>
+        <button @click="toggleDetails{{ monster.id }} = !toggleDetails{{ monster.id }}" class="text-sm font-bold mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block align-text-bottom mr-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 12a1 1 0 01-.707-.293l-4-4a1 1 0 111.414-1.414L10 9.586l3.293-3.293a1 1 0 111.414 1.414l-4 4A1 1 0 0110 12z" clip-rule="evenodd" />
+          </svg>
+          More
+        </button>
+        <div x-show="toggleDetails{{ monster.id }}" class="mt-4" x-cloak>
+          <p><strong>Size:</strong> {{ monster.size }}</p>
+          <p><strong>Type:</strong> {{ monster.creature_type }}</p>
+          <p><strong>Alignment:</strong> {{ monster.alignment }}</p>
+          <p><strong>Armor Class:</strong> {{ monster.armor_class }}</p>
+          <p><strong>Hit Points:</strong> {{ monster.hit_points }}</p>
+          <p><strong>Speed:</strong> {{ monster.speed }}</p>
+          <!-- Add more details as needed -->
+          <button @click="toggleDetails{{ monster.id }} = false" class="text-sm font-bold mt-2">
+            Hide Details
+          </button>
+        </div>
+      </div>
+    {% endfor %}
+
+<!-- Sample Monster Container -->
+<div class="monster-container">
+    <h3>Monster Name</h3>
+    <!-- Static Details Section (Initially Hidden) -->
+    <div class="details" style="display: none;">
+        <p>Size: Medium</p>
+        <p>Type: Humanoid</p>
+        <p>Alignment: Neutral</p>
+        <!-- Add more static details here -->
+    </div>
+    <!-- Button to Toggle Details -->
+    <button onclick="toggleDetails('monster-details-1')">Toggle Details</button>
+</div>
+
+
+  </div>
+{% endblock %}

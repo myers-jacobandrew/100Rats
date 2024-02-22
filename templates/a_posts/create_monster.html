@@ -1,0 +1,53 @@
+{% extends 'layouts/b.html' %}
+
+{% block content %}
+  <h1 class="text-center text-4xl mb-6">Create a Monster</h1>
+  
+  <form id="create-monster-form" action="{% url 'create-monster' %}" method="post" class="max-w-md mx-auto bg-white p-6 rounded-md shadow-md" hx-post="{% url 'create-monster' %}">
+    {% csrf_token %}
+    
+    {{ form.non_field_errors }}
+    
+
+    <div id="step1">
+      <div class="text-center">
+        <button type="button" onclick="showManualForm()" class="button-half" style="background-color: #F7F8FA; color: #1F2937; border-color: #F7F8FA;">Manual Input</button>
+        <span style="color: #1F2937;">or</span>
+        <button type="button" onclick="showAutomaticForm()" class="button-half" style="background-color: #F7F8FA; color: #1F2937; border-color: #F7F8FA;">Automatic Input</button>
+      </div>
+    </div>
+  
+    <div id="step2" style="display: none;">
+      {% if manual_form %}
+        {% include 'a_posts/manual_input_form.html' %}
+      {% elif automatic_form %}
+        {% include 'a_posts/automatic_input_form.html' %}
+      {% endif %}
+    </div>
+
+    
+    <!-- Section for displaying input fields based on selected method -->
+    <div id="input-section" hx-target="#input-section">
+      <script>
+        function showManualForm() {
+          document.getElementById("step1").style.display = "none";
+          document.getElementById("step2").innerHTML = `{% include 'a_posts/manual_input_form.html' %}`;
+          document.getElementById("step2").style.display = "block";
+        }
+    
+        function showAutomaticForm() {
+          document.getElementById("step1").style.display = "none";
+          document.getElementById("step2").innerHTML = `{% include 'a_posts/automatic_input_form.html' %}`;
+          document.getElementById("step2").style.display = "block";
+        }
+      </script>
+    </div>
+
+  </form>
+
+  <div class="mt-6 text-center">
+    centered
+  </div>
+
+
+{% endblock %}
