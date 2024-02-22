@@ -1,0 +1,25 @@
+{% extends 'layouts/b.html' %}
+
+{% block content %}
+  <h1 class="font1 text-center text-4xl mb-6">Create Monster</h1>
+  
+  <form action="{% url 'create_player' %}" method="post" class="max-w-md mx-auto bg-white p-6 rounded-md shadow-md">
+    {% csrf_token %}
+    
+    {{ form.non_field_errors }}
+    
+    <div class="mb-4">
+      <label for="{{ form.raw_stat_block.id_for_label }}" class="block text-gray-600 font-bold mb-2">Raw Stat Block:</label>
+      {{ form.raw_stat_block }}
+      {{ form.raw_stat_block.errors }}
+    </div>
+
+    <div class="text-center">
+      <button type="submit" class="button">Create PC</button>
+    </div>
+  </form>
+
+  <div class="mt-6 text-center">
+    <a href="{% url 'your_previous_page' %}" class="button secondaryAction">Back to Previous Page</a>
+  </div>
+{% endblock %}
