@@ -1,23 +1,30 @@
+# spell_parser.py
+
+## Overview
+This script parses descriptions of spells and extracts their types and effects. It utilizes regular expressions to identify spell types (such as damage-dealing, healing, or utility) and specific effects (such as casting at higher levels or basic targeting options).
+
+
+Example Usage
+
+    The script currently supports basic spell types and effects, specifically direct damaging spells, AoE spells, Healing spells, basic utility spells. Needs more love to support additional types or effects.
+
+## Example Output Format
+Here's an example of the expected format:
+
+`Spell Type: <Type>, Effect: <Effect>`
+
+
 # stat_parser.py
 
 ## Overview
-This script is designed to parse stat blocks of creatures in the Dungeons & Dragons 5th Edition (5e) system. It extracts relevant information such as creature name, size, type, stats, abilities, and actions from a copy and pasted statblock
+This script parses stat blocks of creatures in the Dungeons & Dragons 5th Edition (5e) system. It extracts relevant information (ie name, size, type, stats, abilities, and actions) from a copy and pasted statblock. Test case with an example enemy statblock is provided at the end of the script.
 
-## Usage
-1. Ensure you have Python installed on your system. This script is compatible with Python 3.x.
-2. Navigate to the directory containing the `stat_parser.py` file in your terminal or command prompt.
-3. Run the script by executing the following command:
 
-    ```
-    python stat_parser.py
-    ```
-    
-4. Follow the instructions provided by the script to input a stat block.
-5. The script will parse the stat block and display the extracted information.
 
 ## Example Stat Block Format
-Here's an example of the expected format for a creature's stat block in 5e:
+Here's an example of the expected format:
 
+```
 Creature Name
 Size Type, Alignment
 
@@ -25,20 +32,12 @@ Armor Class 15
 Hit Points 50 (10d8 + 10)
 Speed 30 ft., swim 60 ft.
 
-STR
-18 (+4)
-DEX
-14 (+2)
-CON
-14 (+2)
-INT
-10 (+0)
-WIS
-13 (+1)
-CHA
-8 (-1)
-
-csharp
+STR 18 (+4)
+DEX 14 (+2)
+CON 14 (+2)
+INT 10 (+0)
+WIS 13 (+1)
+CHA 8 (-1)
 
 Saving Throws Str +6, Con +4
 Skills Athletics +6, Perception +3
@@ -52,7 +51,7 @@ Actions
 Multiattack. The creature makes two melee attacks.
 Greataxe. Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 10 (1d12 + 4) slashing damage.
 Javelin. Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage.
-
+```
 
 ## License
 This script is provided under the MIT License. See the LICENSE file for more information.
