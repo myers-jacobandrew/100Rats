@@ -24,3 +24,4 @@ venv/
 
 #Misc Testing/config files
 /templates/a_posts/post_create.html
+/a_core/scripts/legendary_action_parse.py
