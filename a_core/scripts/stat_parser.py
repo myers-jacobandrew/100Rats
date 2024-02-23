@@ -1,17 +1,25 @@
 import re
 
-
 class StatBlockParser:
     def __init__(self):
         pass
-
+    
     def parse_stat_block(self, stat_block):
         parsed_stat_block = {}
         parsed_stat_block["Name"] = self.extract_name(stat_block)
         parsed_stat_block.update(self.extract_size_alignment(stat_block))
         parsed_stat_block["Armor Class"] = self.extract_armor_class(stat_block)
         parsed_stat_block.update(self.extract_hit_points(stat_block))
-        parsed_stat_block["Speed"] = self.extract_speed(stat_block)  
+        
+        # Extract original speed and add it to parsed_stat_block
+        parsed_stat_block["Speed"] = self.extract_speed(stat_block)
+        
+        # Extract speeds and update parsed_stat_block
+        speed_text = parsed_stat_block["Speed"]
+        speeds = self.extract_speeds(speed_text)
+        for speed_type, speed_value in speeds.items():
+            parsed_stat_block[f"{speed_type.capitalize()} Speed"] = speed_value
+        
         parsed_stat_block.update(self.extract_abilities(stat_block))
         parsed_stat_block["Senses"] = self.extract_senses(stat_block)
         parsed_stat_block.update(self.extract_challenge_rating(stat_block))
@@ -21,6 +29,7 @@ class StatBlockParser:
         parsed_stat_block["Legendary Actions"] = legendary_actions if legendary_actions is not None else []
         
         return parsed_stat_block
+
 
     def extract_name(self, stat_block):
         name_pattern = re.compile(r'^\s*\[?([\w\s]+)\]?\n', re.MULTILINE)
@@ -55,6 +64,34 @@ class StatBlockParser:
         speed_pattern = re.compile(r'Speed (.+?)\n', re.MULTILINE)
         speed_match = re.search(speed_pattern, stat_block)
         return speed_match.group(1) if speed_match else None
+
+    def extract_speeds(self, speed_text):
+        speeds = {}
+        
+        # Regular expression pattern to match speed values and types
+        speed_pattern = r'(\d+)\s*ft\.|\b(\w+)\b\s*(\d*)\s*ft\.'
+        
+        # Find all matches of speed pattern in the text
+        matches = re.findall(speed_pattern, speed_text)
+        
+        # Iterate through matches and extract speed values
+        for match in matches:
+            if match[0]:  # If there's a match for numeric speed value
+                speed_value = int(match[0])
+                speed_type = 'land'  # Default speed type is land
+            else:  # If there's a match for non-numeric speed type
+                speed_value = int(match[2])
+                speed_type = match[1]  # Set speed type
+            
+            speeds[speed_type] = speed_value  # Add speed to dictionary
+        
+        return speeds
+
+    def expand_speed(extract_speed_function):
+        # Call extract_speed function to get speed value
+        speed_value = extract_speed_function()
+        print(speed_value)
+        return extract_speeds(speed_value) 
 
     def extract_abilities(self, stat_block):
         abilities_pattern = re.compile(r'(\w{3})\s(\-?\d+) \(([\+\-]?\d+)\)', re.MULTILINE)
