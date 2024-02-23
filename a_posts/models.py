@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 import uuid
 
 
@@ -15,8 +16,6 @@ class Post(models.Model):
         return str(self.title)
 '''
 
-from django.db import models
-import uuid
 
 class Monster(models.Model):
     # Common fields
@@ -24,6 +23,7 @@ class Monster(models.Model):
     size = models.CharField(max_length=20,null=True,blank=True)
     creature_type = models.CharField(max_length=20,null=True,blank=True)
     alignment = models.CharField(max_length=20, null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)  
     
     # Stats
     armor_class = models.IntegerField(null=True, blank=True)
@@ -56,7 +56,7 @@ class Monster(models.Model):
     languages = models.TextField(null=True,blank=True)
     
     # Challenge and XP
-    challenge_rating = models.DecimalField(max_digits=3, decimal_places=1)
+    challenge_rating = models.DecimalField(max_digits=3, decimal_places=1,null=True, blank=True)
     experience_points = models.IntegerField(null=True, blank=True)
     
     # Special, Legendary, and Lair Actions

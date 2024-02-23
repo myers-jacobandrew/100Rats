@@ -27,7 +27,7 @@ def create_monster_view(request):
             print("Form is valid")
 
             if input_method == 'automatic':
-                print("Automatic mode: ")
+                print("Automatic mode:")
                 # Parse the stats from the raw text field
                 raw_text = form.cleaned_data.get('raw_stat_block')
                 print("Raw text:", raw_text)
@@ -46,8 +46,12 @@ def create_monster_view(request):
                 print("Stats have been automatically parsed")
 
             # Save the form instance directly if valid
-            monster = form.save()
-            print("Monster saved:", monster)
+            try:
+                monster = form.save()
+                print("Monster saved:", monster)
+            except Exception as e:
+                print("Error saving monster:", e)
+
 
             # Redirect to appropriate page based on input method
             if input_method == 'automatic':

@@ -12,34 +12,50 @@ def parse_stat_block(stat_block):
     challenge_rating_pattern = re.compile(r'Challenge (\d+) \((\d+) XP\)', re.MULTILINE)
     actions_pattern = re.compile(r'Actions\n\n([\w\s\.,\(\)\:\-\+]+)', re.MULTILINE)
 
-    # Extract information from the stat block using regular expressions
-    name = re.search(name_pattern, stat_block).group(1)
-    size, alignment = re.search(size_alignment_pattern, stat_block).groups()
-    armor_class = int(re.search(armor_class_pattern, stat_block).group(1))
-    hit_points, hit_dice = re.search(hit_points_pattern, stat_block).groups()
-    speed = re.search(speed_pattern, stat_block).group(1)
-    abilities = dict(re.findall(abilities_pattern, stat_block))
-    senses = re.search(senses_pattern, stat_block).group(1)
-    challenge_rating, xp = re.search(challenge_rating_pattern, stat_block).groups()
-    actions = re.search(actions_pattern, stat_block).group(1)
+    # Initialize variables to store extracted information
+    parsed_stat_block = {}
 
-    # Format the extracted information into a dictionary
-    parsed_stat_block = {
-        "Name": name,
-        "Size": size,
-        "Alignment": alignment,
-        "Armor Class": armor_class,
-        "Hit Points": hit_points,
-        "Hit Dice": hit_dice,
-        "Speed": speed,
-        "Abilities": abilities,
-        "Senses": senses,
-        "Challenge Rating": challenge_rating,
-        "Experience Points": xp,
-        "Actions": actions
-    }
+    # Extract information from the stat block using regular expressions
+    name_match = re.search(name_pattern, stat_block)
+    if name_match:
+        parsed_stat_block["Name"] = name_match.group(1)
+
+    size_alignment_match = re.search(size_alignment_pattern, stat_block)
+    if size_alignment_match:
+        parsed_stat_block["Size"], parsed_stat_block["Alignment"] = size_alignment_match.groups()
+
+    armor_class_match = re.search(armor_class_pattern, stat_block)
+    if armor_class_match:
+        parsed_stat_block["Armor Class"] = int(armor_class_match.group(1))
+
+    hit_points_match = re.search(hit_points_pattern, stat_block)
+    if hit_points_match:
+        parsed_stat_block["Hit Points"], parsed_stat_block["Hit Dice"] = hit_points_match.groups()
+
+    speed_match = re.search(speed_pattern, stat_block)
+    if speed_match:
+        parsed_stat_block["Speed"] = speed_match.group(1)
+
+    abilities_matches = re.findall(abilities_pattern, stat_block)
+    if abilities_matches:
+        parsed_stat_block["Abilities"] = {ability[0]: (int(ability[1]), int(ability[2])) for ability in abilities_matches}
+
+    senses_match = re.search(senses_pattern, stat_block)
+    if senses_match:
+        parsed_stat_block["Senses"] = senses_match.group(1)
+
+    challenge_rating_match = re.search(challenge_rating_pattern, stat_block)
+    if challenge_rating_match:
+        parsed_stat_block["Challenge Rating"], parsed_stat_block["Experience Points"] = challenge_rating_match.groups()
+
+    actions_match = re.search(actions_pattern, stat_block)
+    if actions_match:
+        parsed_stat_block["Actions"] = actions_match.group(1)
 
     return parsed_stat_block
+
+
+
 '''
 # Example stat block
 stat_block = """
