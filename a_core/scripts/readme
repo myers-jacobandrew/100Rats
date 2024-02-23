@@ -15,14 +15,12 @@ Here's an example of the expected format:
 
 
 # stat_parser.py
+Overview
 
-## Overview
-This script parses stat blocks of creatures in the Dungeons & Dragons 5th Edition (5e) system. It extracts relevant information (ie name, size, type, stats, abilities, and actions) from a copy and pasted statblock. Test case with an example enemy statblock is provided at the end of the script.
+This script parses stat blocks of creatures in the Dungeons & Dragons 5th Edition (5e) system. It extracts relevant information such as name, size, type, stats, abilities, actions, and legendary actions from a copy and pasted stat block. Test cases with example enemy stat blocks are provided at the end of the script.
+Example Stat Block Format
 
-
-
-## Example Stat Block Format
-Here's an example of the expected format:
+Here's an example of the expected input format:
 
 ```
 Creature Name
@@ -51,7 +49,27 @@ Actions
 Multiattack. The creature makes two melee attacks.
 Greataxe. Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 10 (1d12 + 4) slashing damage.
 Javelin. Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage.
+
+Legendary Actions
+The creature can take 3 legendary actions, choosing from the options below. Only one legendary action option can be used at a time and only at the end of another creature’s turn. The creature regains spent legendary actions at the start of its turn.
+
+Detect. The creature makes a Wisdom (Perception) check.
+Tail Attack. The creature makes a tail attack.
+Wing Attack (Costs 2 Actions). The creature beats its wings. Each creature within 15 ft. of the creature must succeed on a DC 15 Dexterity saving throw or take 15 (2d6 + 2) bludgeoning damage and be knocked prone. The creature can then fly up to half its flying speed.
 ```
+
+## Usage
+
+To use the Stat Block Parser, copy and paste the creature's stat block into the provided function. Then, execute the script to obtain a dictionary containing the parsed information.
+
+# Instantiate the StatBlockParser
+parser = StatBlockParser()
+
+# Parse a stat block
+parsed_result = parser.parse_stat_block(stat_block)
+
+# Print the parsed result
+print(parsed_result)
 
 ## License
 This script is provided under the MIT License. See the LICENSE file for more information.
