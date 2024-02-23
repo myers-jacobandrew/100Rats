@@ -5,8 +5,7 @@ This script parses descriptions of spells and extracts their types and effects. 
 
 
 Example Usage
-
-    The script currently supports basic spell types and effects, specifically direct damaging spells, AoE spells, Healing spells, basic utility spells. Needs more love to support additional types or effects.
+The script currently supports basic spell types and effects, specifically direct damaging spells, AoE spells, Healing spells, basic utility spells. Needs more love to support additional types or effects.
 
 ## Example Output Format
 Here's an example of the expected format:
@@ -61,7 +60,7 @@ Wing Attack (Costs 2 Actions). The creature beats its wings. Each creature withi
 ## Usage
 
 To use the Stat Block Parser, copy and paste the creature's stat block into the provided function. Then, execute the script to obtain a dictionary containing the parsed information.
-
+```
 # Instantiate the StatBlockParser
 parser = StatBlockParser()
 
@@ -70,6 +69,6 @@ parsed_result = parser.parse_stat_block(stat_block)
 
 # Print the parsed result
 print(parsed_result)
-
+```
 ## License
 This script is provided under the MIT License. See the LICENSE file for more information.
