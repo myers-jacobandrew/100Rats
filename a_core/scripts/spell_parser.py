@@ -27,7 +27,7 @@ def parse_spell_description(description):
     
     return spell_type, effect
 
-# Test the function with example spell descriptions
+# Test function with example spell descriptions
 spell_descriptions = [
     """Fire Bolt
     Cantrip Evocation

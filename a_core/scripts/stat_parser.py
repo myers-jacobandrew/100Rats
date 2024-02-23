@@ -1,92 +1,127 @@
 import re
 
-def parse_stat_block(stat_block):
-    parsed_stat_block = {}
 
-    parsed_stat_block["Name"] = extract_name(stat_block)
-    parsed_stat_block.update(extract_size_alignment(stat_block))
-    parsed_stat_block["Armor Class"] = extract_armor_class(stat_block)
-    parsed_stat_block.update(extract_hit_points(stat_block))
-    parsed_stat_block.update(extract_abilities(stat_block))
-    parsed_stat_block["Senses"] = extract_senses(stat_block)
-    parsed_stat_block.update(extract_challenge_rating(stat_block))
-    parsed_stat_block["Actions"] = extract_actions(stat_block)
+class StatBlockParser:
+    def __init__(self):
+        pass
 
-    return parsed_stat_block
+    def parse_stat_block(self, stat_block):
+        parsed_stat_block = {}
+        parsed_stat_block["Name"] = self.extract_name(stat_block)
+        parsed_stat_block.update(self.extract_size_alignment(stat_block))
+        parsed_stat_block["Armor Class"] = self.extract_armor_class(stat_block)
+        parsed_stat_block.update(self.extract_hit_points(stat_block))
+        parsed_stat_block.update(self.extract_abilities(stat_block))
+        parsed_stat_block["Senses"] = self.extract_senses(stat_block)
+        parsed_stat_block.update(self.extract_challenge_rating(stat_block))
+        actions, legendary_actions = self.extract_actions(stat_block)
+            
+        parsed_stat_block["Actions"] = actions
+        parsed_stat_block["Legendary Actions"] = legendary_actions if legendary_actions is not None else []
 
-def extract_name(stat_block):
-    name_pattern = re.compile(r'^\s*\[?([\w\s]+)\]?\n', re.MULTILINE)
-    name_match = re.search(name_pattern, stat_block)
-    return name_match.group(1).strip() if name_match else None
+        return parsed_stat_block
 
-def extract_size_alignment(stat_block):
-    size_alignment_pattern = re.compile(r'^(.+), (.+)\n', re.MULTILINE)
-    size_alignment_match = re.search(size_alignment_pattern, stat_block)
-    if size_alignment_match:
-        size, alignment = size_alignment_match.groups()
-        size = size.strip()
-        if 'ft.' in size:
-            return {"Speed": size, "Alignment": alignment.strip()}
-        else:
-            return {"Size": size, "Alignment": alignment.strip()}
-    return {}
+    def extract_name(self, stat_block):
+        name_pattern = re.compile(r'^\s*\[?([\w\s]+)\]?\n', re.MULTILINE)
+        name_match = re.search(name_pattern, stat_block)
+        return name_match.group(1).strip() if name_match else None
 
-def extract_armor_class(stat_block):
-    armor_class_pattern = re.compile(r'Armor Class (\d+)', re.MULTILINE)
-    armor_class_match = re.search(armor_class_pattern, stat_block)
-    return int(armor_class_match.group(1)) if armor_class_match else None
+    def extract_size_alignment(self, stat_block):
+        size_alignment_pattern = re.compile(r'^(.+), (.+)\n', re.MULTILINE)
+        size_alignment_match = re.search(size_alignment_pattern, stat_block)
+        if size_alignment_match:
+            size, alignment = size_alignment_match.groups()
+            size = size.strip()
+            if 'ft.' in size:
+                return {"Speed": size, "Alignment": alignment.strip()}
+            else:
+                return {"Size": size, "Alignment": alignment.strip()}
+        return {}
 
-def extract_hit_points(stat_block):
-    hit_points_pattern = re.compile(r'Hit Points (\d+) \((.+)\)', re.MULTILINE)
-    hit_points_match = re.search(hit_points_pattern, stat_block)
-    if hit_points_match:
-        return {"Hit Points": hit_points_match.group(1), "Hit Dice": hit_points_match.group(2)}
-    return {}
+    def extract_armor_class(self, stat_block):
+        armor_class_pattern = re.compile(r'Armor Class (\d+)', re.MULTILINE)
+        armor_class_match = re.search(armor_class_pattern, stat_block)
+        return int(armor_class_match.group(1)) if armor_class_match else None
 
-def extract_abilities(stat_block):
-    abilities_pattern = re.compile(r'(\w{3})\s(\-?\d+) \(([\+\-]?\d+)\)', re.MULTILINE)
-    abilities_matches = re.findall(abilities_pattern, stat_block)
-    if abilities_matches:
-        return {"Abilities": {ability[0]: (int(ability[1]), int(ability[2])) for ability in abilities_matches}}
-    return {}
+    def extract_hit_points(self, stat_block):
+        hit_points_pattern = re.compile(r'Hit Points (\d+) \((.+)\)', re.MULTILINE)
+        hit_points_match = re.search(hit_points_pattern, stat_block)
+        if hit_points_match:
+            return {"Hit Points": hit_points_match.group(1), "Hit Dice": hit_points_match.group(2)}
+        return {}
 
-def extract_senses(stat_block):
-    senses_pattern = re.compile(r'Senses (.+)', re.MULTILINE)
-    senses_match = re.search(senses_pattern, stat_block)
-    return senses_match.group(1) if senses_match else None
+    def extract_abilities(self, stat_block):
+        abilities_pattern = re.compile(r'(\w{3})\s(\-?\d+) \(([\+\-]?\d+)\)', re.MULTILINE)
+        abilities_matches = re.findall(abilities_pattern, stat_block)
+        if abilities_matches:
+            return {"Abilities": {ability[0]: (int(ability[1]), int(ability[2])) for ability in abilities_matches}}
+        return {}
 
-def extract_challenge_rating(stat_block):
-    challenge_rating_pattern = re.compile(r'Challenge (\d+) \((\d+) XP\)', re.MULTILINE)
-    challenge_rating_match = re.search(challenge_rating_pattern, stat_block)
-    if challenge_rating_match:
-        return {"Challenge Rating": challenge_rating_match.group(1), "Experience Points": challenge_rating_match.group(2)}
-    return {}
+    def extract_senses(self, stat_block):
+        senses_pattern = re.compile(r'Senses (.+)', re.MULTILINE)
+        senses_match = re.search(senses_pattern, stat_block)
+        return senses_match.group(1) if senses_match else None
 
-def extract_actions(stat_block):
-    # Define the pattern to match the Actions section
-    actions_pattern = re.compile(r'Actions\s*((?:.|\n)*?)(?=Legendary Actions|$)', re.MULTILINE)
-    
-    # Search for the Actions section in the stat block
-    actions_match = re.search(actions_pattern, stat_block)
-    
-    # Initialize a list to store individual actions
-    individual_actions = []
-    
-    # If the Actions section is found
-    if actions_match:
-        # Extract the text of the Actions section
-        actions_text = actions_match.group(1)
-        
-        # Define the pattern to match individual actions
-        individual_action_pattern = re.compile(r'^\s*([A-Za-z]+(?: [A-Za-z]+)*)\.\s*(.+?)(?=\n\s*[A-Za-z]+(?: [A-Za-z]+)*\.|\Z)', re.MULTILINE | re.DOTALL)
-        
-        # Search for individual actions within the Actions section
-        for match in re.finditer(individual_action_pattern, actions_text):
-            action_name = match.group(1).strip()
-            action_details = match.group(2).strip()
-            individual_actions.append({"Name": action_name, "Details": action_details})
-    
-    return individual_actions
+    def extract_challenge_rating(self, stat_block):
+        challenge_rating_pattern = re.compile(r'Challenge (\d+) \((\d+) XP\)', re.MULTILINE)
+        challenge_rating_match = re.search(challenge_rating_pattern, stat_block)
+        if challenge_rating_match:
+            return {"Challenge Rating": challenge_rating_match.group(1), "Experience Points": challenge_rating_match.group(2)}
+        return {}
+            
+    def extract_actions(self, stat_block):
+        actions = []
+        legendary_actions = []
+
+        # Extract the actions section
+        actions_section = re.findall(r"Actions\n(?:\s+)(.*?)(?:Legendary Actions|\Z)", stat_block, re.DOTALL)
+        if actions_section:
+            action_text = actions_section[0].strip()  # Extracting actions text
+            action_matches = re.findall(r"^\s*([A-Za-z\s]+)\. (.*?)(?=\n\s*[A-Za-z\s]+\. |\n\n|\Z)", action_text, re.DOTALL | re.MULTILINE)
+            for action_match in action_matches:
+                actions.append({
+                    "Action Name": action_match[0].strip(),
+                    "Action Description": action_match[1].strip()
+                })
+
+        # Extract legendary actions if they exist
+        if "Legendary Actions" in stat_block:
+            legendary_text = stat_block.split("Legendary Actions")[1].strip()  # Extract legendary actions text
+            legendary_actions = self.extract_legendary_actions(legendary_text)  # Extract legendary actions
+
+        # Ensure that actions and legendary_actions are always lists
+        return actions, legendary_actions
+
+    def extract_legendary_actions(self, text):
+        legendary_actions = []
+
+        # Split the text into individual legendary actions
+        action_blocks = re.split(r"\s{2,}", text)
+
+#        print("Action Blocks:", action_blocks)  # Debug print
+
+        for block in action_blocks:
+            # Extract action name and description
+            action_match = re.match(r"^([\w\s]+)(?: \((Costs \d+ Actions\))?)\.(.*?)$", block)
+            if action_match:
+                action_name = action_match.group(1).strip()
+                action_description = action_match.group(3).strip()
+#                print("Action Name:", action_name)  # Debug print
+#                print("Action Description:", action_description)  # Debug print
+                legendary_actions.append({
+                    "Action Name": action_name,
+                    "Action Description": action_description
+                })
+
+#        print("Legendary Actions:", legendary_actions)  # Debug print
+
+        return legendary_actions
+
+
+
+
+
+
 
 
 
@@ -212,77 +247,19 @@ Ancient Brass Dragon can take 3 legendary actions, choosing from the options bel
 """,
 ]
 
+
+# Instantiate the StatBlockParser
+parser = StatBlockParser()
+
 # Loop through each test block
 for i, test_block in enumerate(test_blocks, start=1):
     print(f"Test Block {i}:")
     print("-" * 20)
     
-    # Call the parse_stat_block function with the current test block
-    parsed_result = parse_stat_block(test_block)
+    # Call the parse_stat_block method of the parser object with the current test block
+    parsed_result = parser.parse_stat_block(test_block)
     
     # Print the parsed result
     print("Parsed Result:")
     print(parsed_result)
     print()
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-    
-'''
-# Example stat block
-stat_block = """
-Rat
-Tiny beast, Unaligned
-
-    Armor Class 10
-    Hit Points 1 (1d4-1)
-    Speed 20 ft.
-
-STR
-2 (-4)
-DEX
-11 (+0)
-CON
-9 (-1)
-INT
-2 (-4)
-WIS
-10 (+0)
-CHA
-4 (-3)
-
-    Senses Darkvision 30 Ft., passive Perception 10
-    Challenge 0 (10 XP)
-
-    Keen Smell. The rat has advantage on Wisdom (Perception) checks that rely on smell.
-
-Actions
-
-    Bite. Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: (1d1) piercing damage.
-"""
-
-# Parse the stat block
-parsed_stat_block = parse_stat_block(stat_block)
-
-# Print the parsed information
-for key, value in parsed_stat_block.items():
-    print(f"{key}: {value}")
-'''
