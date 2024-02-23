@@ -11,14 +11,15 @@ class StatBlockParser:
         parsed_stat_block.update(self.extract_size_alignment(stat_block))
         parsed_stat_block["Armor Class"] = self.extract_armor_class(stat_block)
         parsed_stat_block.update(self.extract_hit_points(stat_block))
+        parsed_stat_block["Speed"] = self.extract_speed(stat_block)  
         parsed_stat_block.update(self.extract_abilities(stat_block))
         parsed_stat_block["Senses"] = self.extract_senses(stat_block)
         parsed_stat_block.update(self.extract_challenge_rating(stat_block))
-        actions, legendary_actions = self.extract_actions(stat_block)
-            
+        parsed_stat_block.update(self.extract_special_abilities(stat_block))  
+        actions, legendary_actions, legendary_actions_count = self.extract_actions(stat_block)
         parsed_stat_block["Actions"] = actions
         parsed_stat_block["Legendary Actions"] = legendary_actions if legendary_actions is not None else []
-
+        
         return parsed_stat_block
 
     def extract_name(self, stat_block):
@@ -49,6 +50,11 @@ class StatBlockParser:
         if hit_points_match:
             return {"Hit Points": hit_points_match.group(1), "Hit Dice": hit_points_match.group(2)}
         return {}
+    
+    def extract_speed(self, stat_block):
+        speed_pattern = re.compile(r'Speed (.+?)\n', re.MULTILINE)
+        speed_match = re.search(speed_pattern, stat_block)
+        return speed_match.group(1) if speed_match else None
 
     def extract_abilities(self, stat_block):
         abilities_pattern = re.compile(r'(\w{3})\s(\-?\d+) \(([\+\-]?\d+)\)', re.MULTILINE)
@@ -68,10 +74,26 @@ class StatBlockParser:
         if challenge_rating_match:
             return {"Challenge Rating": challenge_rating_match.group(1), "Experience Points": challenge_rating_match.group(2)}
         return {}
-            
+
+    def extract_special_abilities(self, stat_block):
+        special_abilities = {}
+        special_abilities_pattern = re.compile(r' XP\)\n(.*?)(?=\n\nActions\n|\Z)', re.DOTALL)
+        special_abilities_match = re.search(special_abilities_pattern, stat_block)
+        if special_abilities_match:
+#            print("Special abilities pattern matched.")   
+            # Extract the matched text
+            special_abilities_text = special_abilities_match.group(1)
+#            print("Special Abilitie Text:"+special_abilities_text)
+            # Clean the extracted text
+            cleaned_special_abilities = special_abilities_text.strip()
+#            print("Special Abilitie Text Cleaned:"+cleaned_special_abilities)
+        return {"Special Abilities": cleaned_special_abilities}
+
+    
     def extract_actions(self, stat_block):
         actions = []
         legendary_actions = []
+        legendary_action_count = 0
 
         # Extract the actions section
         actions_section = re.findall(r"Actions\n(?:\s+)(.*?)(?:Legendary Actions|\Z)", stat_block, re.DOTALL)
@@ -87,36 +109,55 @@ class StatBlockParser:
         # Extract legendary actions if they exist
         if "Legendary Actions" in stat_block:
             legendary_text = stat_block.split("Legendary Actions")[1].strip()  # Extract legendary actions text
-            legendary_actions = self.extract_legendary_actions(legendary_text)  # Extract legendary actions
-
+            legendary_actions, legendary_action_count = self.extract_legendary_actions(legendary_text)  # Extract legendary actions
+#            print("legendary_text:"+legendary_text)
+            
         # Ensure that actions and legendary_actions are always lists
-        return actions, legendary_actions
+        return actions, legendary_actions, legendary_action_count
 
     def extract_legendary_actions(self, text):
         legendary_actions = []
+        legendary_action_count = 0
 
-        # Split the text into individual legendary actions
-        action_blocks = re.split(r"\s{2,}", text)
+        # Extract the count of legendary actions
+        action_count_match = re.search(r"(\d+) legendary actions", text)
+        if action_count_match:
+            legendary_action_count = int(action_count_match.group(1))
 
-#        print("Action Blocks:", action_blocks)  # Debug print
+        # Find the index where legendary actions start using regex
+        action_start_match = re.search(r"\n\n", text)
+        if action_start_match:
+            start_index = action_start_match.end()
+            legendary_actions_text = text[start_index:].strip()
 
-        for block in action_blocks:
-            # Extract action name and description
-            action_match = re.match(r"^([\w\s]+)(?: \((Costs \d+ Actions\))?)\.(.*?)$", block)
-            if action_match:
-                action_name = action_match.group(1).strip()
-                action_description = action_match.group(3).strip()
-#                print("Action Name:", action_name)  # Debug print
-#                print("Action Description:", action_description)  # Debug print
-                legendary_actions.append({
-                    "Action Name": action_name,
-                    "Action Description": action_description
-                })
+        # Remove leading/trailing whitespace
+        legendary_actions_text = legendary_actions_text.strip()
 
-#        print("Legendary Actions:", legendary_actions)  # Debug print
+        # Split legendary actions by newline followed by an indented line,
+        # capturing cost information within parentheses (optional)
+        action_blocks = re.findall(
+            r"^([\w\s]+)\s*(?:\(([^)]+)\)\.\s)?(.*?)(?:\n|$)",
+            legendary_actions_text,
+            re.DOTALL | re.MULTILINE,
+        )
 
-        return legendary_actions
+        # Append all legendary actions
+        for action_name, cost, action_description in action_blocks:
+            # Combine action name and cost if present, otherwise use only action name
+            if cost:
+                action_name = f"{action_name.strip()} (Cost {cost.strip()} Actions)"
+            else:
+                action_name = action_name.strip()
 
+            # Split the description at the newline character if present
+            if '\n' in action_description:
+                action_description, additional_description = action_description.split('\n', 1)
+                legendary_actions.append({"Legendary Action": action_name, "Legendary Action Description": action_description.strip()})
+                legendary_actions.append({"Legendary Action": action_name, "Legendary Action Description": additional_description.strip()})
+            else:
+                legendary_actions.append({"Legendary Action": action_name, "Legendary Action Description": action_description.strip()})
+
+        return legendary_actions, legendary_action_count
 
 
 
@@ -258,7 +299,8 @@ for i, test_block in enumerate(test_blocks, start=1):
     
     # Call the parse_stat_block method of the parser object with the current test block
     parsed_result = parser.parse_stat_block(test_block)
-    
+    print()
+    print("-" * 20)
     # Print the parsed result
     print("Parsed Result:")
     print(parsed_result)
