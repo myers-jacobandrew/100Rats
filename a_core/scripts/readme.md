@@ -62,7 +62,7 @@ Wing Attack (Costs 2 Actions). The creature beats its wings. Each creature withi
 To use the Stat Block Parser, copy and paste the creature's stat block into the provided function. Then, execute the script to obtain a dictionary containing the parsed information.
 ```
 # Instantiate the StatBlockParser
-`parser = StatBlockParser()`
+parser = StatBlockParser()
 
 # Parse a stat block
 parsed_result = parser.parse_stat_block(stat_block)
