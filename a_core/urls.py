@@ -19,9 +19,14 @@ from django.urls import path
 from a_posts.views import *
 
 urlpatterns = [
+    #path('page-name', html_page_name, name='page-name')
+    #path('',name=''),
     path('admin/', admin.site.urls),
     path('', home_view),
-    #path('post/create/', post_create_view, name='post-create'),
     path('monster/create/', create_monster_view, name='create-monster'),
-    path('view-all-monsters/', view_all_monsters, name='view-all-monsters'),
+    path('view/monsters/', view_all_monsters, name='view-all-monsters'),
+    path('monster/create/manual-input-form/', manual_input_form_view, name='manual-input-form'),
+    path('monster/create/automatic-input-form/', automatic_input_form_view, name='automatic-input-form'),
+    path('monster/create/manual-data-entered/', manual_data_entered_view, name='manual-data-entered'),
+    path('monster/create/automatic-data-entered/', automatic_data_entered_view, name='automatic-data-entered'),
 ]

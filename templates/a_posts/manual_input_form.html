@@ -1,21 +1,113 @@
-<form id="manual-form" style="display: none;">
-    <h2 class="font1 text-center text-2xl mb-4">Manual Input</h2>    
-    <form method='POST'>
-        <p>
-            <label>Monster Name:</label>
-            <input required="" >
-        </p>
-        <p>
-            <label for="id_title">Title:</label>
-            <input required="" >
-        </p>
-        <p>
-            <label for="id_artist">Artist:</label>
-            <input required="" >
-        </p>
-        <button type="submit" class="mt-1">Create Monster</button>
-        <a class="button secondaryAction ml-1" href="">Cancel</a>
-    </form>
-</div>
-  </form>
-  
+<input type="hidden" id="input_method" name="input_method" value="manual">
+<h2 class="font2 text-center text-2xl mb-4">Manual Input</h2>    
+   
+<form id="manual-monster-form" action="{% url 'create-monster' %}" method="post" class="max-w-md mx-auto bg-white p-6 rounded-md shadow-md" hx-post="{% url 'create-monster' %}">
+    {% csrf_token %}
+    
+    {{ form.non_field_errors }} 
+    <p>
+        <label for="id_name">Creature Name:</label>
+        <input type="text" name="name" required>
+    </p>
+    <p>
+        <label for="id_size">Size:</label>
+        <input type="text" name="size" required="">
+    </p>
+    <p>
+        <label for="id_creature_type">Creature Type:</label>
+        <input type="text" name="creature_type" required="">
+    </p>
+    <p>
+        <label for="id_alignment">Alignment:</label>
+        <input type="text" name="alignment" required="">
+    </p>
+    <p>
+        <label for="id_armor_class">Armor Class:</label>
+        <input type="number" name="armor_class" required="">
+    </p>
+    <p>
+        <label for="id_hit_points">Hit Points:</label>
+        <input type="number" name="hit_points" required="">
+    </p>
+    <p>
+        <label for="id_speed">Speed:</label>
+        <input type="text" name="speed" required="">
+    </p>
+    <p>
+        <label for="id_strength">Strength:</label>
+        <input type="number" name="strength" required="">
+    </p>
+    <p>
+        <label for="id_dexterity">Dexterity:</label>
+        <input type="number" name="dexterity" required="">
+    </p>
+    <p>
+        <label for="id_constitution">Constitution:</label>
+        <input type="number" name="constitution" required="">
+    </p>
+    <p>
+        <label for="id_intelligence">Intelligence:</label>
+        <input type="number" name="intelligence" required="">
+    </p>
+    <p>
+        <label for="id_wisdom">Wisdom:</label>
+        <input type="number" name="wisdom" required="">
+    </p>
+    <p>
+        <label for="id_charisma">Charisma:</label>
+        <input type="number" name="charisma" required="">
+    </p>
+    <p>
+        <label for="id_saving_throws">Saving Throws:</label>
+        <textarea name="saving_throws"></textarea>
+    </p>
+    <p>
+        <label for="id_skills">Skills:</label>
+        <textarea name="skills"></textarea>
+    </p>
+    <p>
+        <label for="id_damage_resistances">Damage Resistances:</label>
+        <textarea name="damage_resistances"></textarea>
+    </p>
+    <p>
+        <label for="id_damage_immunities">Damage Immunities:</label>
+        <textarea name="damage_immunities"></textarea>
+    </p>
+    <p>
+        <label for="id_condition_immunities">Condition Immunities:</label>
+        <textarea name="condition_immunities"></textarea>
+    </p>
+    <p>
+        <label for="id_senses">Senses:</label>
+        <textarea name="senses"></textarea>
+    </p>
+    <p>
+        <label for="id_languages">Languages:</label>
+        <textarea name="languages"></textarea>
+    </p>
+    <p>
+        <label for="id_challenge_rating">Challenge Rating:</label>
+        <input type="number" name="challenge_rating" step="0.1" required="">
+    </p>
+    <p>
+        <label for="id_experience_points">Experience Points:</label>
+        <input type="number" name="experience_points">
+    </p>
+    <p>
+        <label for="id_special_abilities">Special Abilities:</label>
+        <textarea name="special_abilities"></textarea>
+    </p>
+    <p>
+        <label for="id_special_abilities_count">Special Abilities Count:</label>
+        <input type="number" name="special_abilities_count">
+    </p>
+    <p>
+        <label for="id_actions">Actions:</label>
+        <textarea name="actions"></textarea>
+    </p>
+   
+    <button type="submit" class="mt-1">Create Monster</button>
+    <!--<button type="submit" name="create_and_add_another" value="true" class="mt-1">Create and Add Another</button>-->
+    <a class="button secondaryAction ml-1" href="" value="Back">Back</a>
+
+</form>

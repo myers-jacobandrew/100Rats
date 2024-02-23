@@ -21,3 +21,6 @@ __pycache__/
 
 # Virtual environment
 venv/
+
+#Misc Testing/config files
+/templates/a_posts/post_create.html
