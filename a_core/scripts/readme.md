@@ -5,8 +5,7 @@ This script parses descriptions of spells and extracts their types and effects. 
 
 
 Example Usage
-
-    The script currently supports basic spell types and effects, specifically direct damaging spells, AoE spells, Healing spells, basic utility spells. Needs more love to support additional types or effects.
+The script currently supports basic spell types and effects, specifically direct damaging spells, AoE spells, Healing spells, basic utility spells. Needs more love to support additional types or effects.
 
 ## Example Output Format
 Here's an example of the expected format:
