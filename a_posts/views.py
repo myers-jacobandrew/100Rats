@@ -11,6 +11,7 @@ def home_view(request):
     title = 'Welcome'
     monsters = Monster.objects.all()
     return render(request, 'a_posts/home.html', {'title': title, 'monsters': monsters})
+from .models import Monster
 
 def create_monster_view(request):
     if request.method == 'POST':
@@ -44,14 +45,24 @@ def create_monster_view(request):
                 # Update form data with parsed stats
                 form.cleaned_data.update(parsed_stats)
                 print("Stats have been automatically parsed")
+                
+            print("Form data after parsing:", form.cleaned_data)
+          
+          
+          # Save the form instance directly if valid
+            try:                
+                monster = form.save(commit=False)
+                # Add input_method to the monster instance
+                monster.input_method = input_method
 
-            # Save the form instance directly if valid
-            try:
-                monster = form.save()
+                # Update the instance with parsed stats
+                monster.__dict__.update(parsed_stats)
+                print("Monster before saving:", monster.__dict__)
+                
+                monster.save()
                 print("Monster saved:", monster)
             except Exception as e:
                 print("Error saving monster:", e)
-
 
             # Redirect to appropriate page based on input method
             if input_method == 'automatic':
@@ -68,6 +79,8 @@ def create_monster_view(request):
     return render(request, 'a_posts/create_monster.html', {'form': form})
 
 
+#                # Add input_method to the monster instance
+#                monster.input_method = input_method
 def view_all_monsters(request):
     monsters = Monster.objects.all()
     return render(request, 'a_posts/view_all_monsters.html', {'monsters': monsters})

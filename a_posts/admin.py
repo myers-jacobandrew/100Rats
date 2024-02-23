@@ -7,6 +7,6 @@ admin.site.register(PlayerCharacter)
 
 #Fields to display in admin panel
 class MonsterAdmin(admin.ModelAdmin):
-    list_display = ['name', 'size', 'alignment', 'armor_class', 'hit_points', 'created_at'] 
+    list_display = ['name', 'size', 'alignment', 'armor_class', 'hit_points', 'created_at', 'input_method'] 
 
 admin.site.register(Monster, MonsterAdmin)

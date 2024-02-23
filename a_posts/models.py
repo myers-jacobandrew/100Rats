@@ -18,13 +18,19 @@ class Post(models.Model):
 
 
 class Monster(models.Model):
+    INPUT_METHOD_CHOICES = [
+    ('automatic', 'Automatic'),
+    ('manual', 'Manual'),
+    ]
+    
     # Common fields
     name = models.CharField(max_length=255)
     size = models.CharField(max_length=20,null=True,blank=True)
     creature_type = models.CharField(max_length=20,null=True,blank=True)
     alignment = models.CharField(max_length=20, null=True, blank=True)
-    created_at = models.DateTimeField(default=timezone.now)  
-    
+    created_at = models.DateTimeField(default=timezone.now)
+    input_method = models.CharField(max_length=20, choices=INPUT_METHOD_CHOICES, default='manual')
+            
     # Stats
     armor_class = models.IntegerField(null=True, blank=True)
     hit_points = models.PositiveIntegerField(null=True, blank=True)
