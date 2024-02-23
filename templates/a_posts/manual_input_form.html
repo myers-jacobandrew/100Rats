@@ -1,10 +1,11 @@
-<input type="hidden" id="input_method" name="input_method" value="manual">
 <h2 class="font2 text-center text-2xl mb-4">Manual Input</h2>    
    
 <form id="manual-monster-form" action="{% url 'create-monster' %}" method="post" class="max-w-md mx-auto bg-white p-6 rounded-md shadow-md" hx-post="{% url 'create-monster' %}">
     {% csrf_token %}
-    
     {{ form.non_field_errors }} 
+
+    <input type="hidden" id="input_method" name="input_method" value="automatic">
+
     <p>
         <label for="id_name">Creature Name:</label>
         <input type="text" name="name" required>
