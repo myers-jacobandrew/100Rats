@@ -1,33 +1,34 @@
 # views.py
 
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from .models import *
-from .forms import *
-
+from django.http import HttpRequest, HttpResponse
+from .models import Monster
+from .forms import AutomaticMonsterForm, ManualMonsterForm
 from a_core.scripts.stat_parser import StatBlockParser
+from typing import Dict, Any, List, Union
 
 
-def home_view(request):
-    title = 'Welcome'
-    monsters = Monster.objects.all()
+def home_view(request: HttpRequest) -> HttpResponse:
+    title: str = 'Welcome'
+    monsters: QuerySet[Monster] = Monster.objects.all()
     return render(request, 'a_posts/home.html', {'title': title, 'monsters': monsters})
 
-def create_monster_view(request):
+
+def create_monster_view(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         # Check if the input method is automatic
-        input_method = request.POST.get('input_method')
+        input_method: str = request.POST.get('input_method')
         if input_method == 'automatic':
-            form = AutomaticMonsterForm(request.POST)
+            form: Union[AutomaticMonsterForm, None] = AutomaticMonsterForm(request.POST)
         else:
-            form = ManualMonsterForm(request.POST)
+            form: Union[ManualMonsterForm, None] = ManualMonsterForm(request.POST)
 
         if form.is_valid():
-            # If the input method is automatic, parse the stats from the raw text field
             if input_method == 'automatic':
-                raw_text = form.cleaned_data.get('raw_stat_block')
-                parser = StatBlockParser()
-                parsed_stats = parser.parse_stat_block(raw_text)
+                raw_text: str = form.cleaned_data.get('raw_stat_block')
+                parser: StatBlockParser = StatBlockParser()
+                parsed_stats: Dict[str, Union[str, Dict[str, str], List[Dict[str, str]]]] = parser.parse_stat_block(raw_text)
+
                 
                 print("Name Type:", type(parsed_stats.get('Name')))
                 print("Name Value:", parsed_stats.get('Name'))
@@ -132,18 +133,23 @@ def create_monster_view(request):
 
 
 
-def view_all_monsters(request):
-    monsters = Monster.objects.all()
+
+def view_all_monsters(request: HttpRequest) -> HttpResponse:
+    monsters: QuerySet[Monster] = Monster.objects.all()
     return render(request, 'a_posts/view_all_monsters.html', {'monsters': monsters})
 
-def manual_input_form_view(request):
+
+def manual_input_form_view(request: HttpRequest) -> HttpResponse:
     return render(request, 'a_posts/manual_input_form.html')
 
-def automatic_input_form_view(request):
+
+def automatic_input_form_view(request: HttpRequest) -> HttpResponse:
     return render(request, 'a_posts/automatic_input_form.html')
- 
-def automatic_data_entered_view(request):
+
+
+def automatic_data_entered_view(request: HttpRequest) -> HttpResponse:
     return render(request, 'automatic_data_entered.html')
 
-def manual_data_entered_view(request):
+
+def manual_data_entered_view(request: HttpRequest) -> HttpResponse:
     return render(request, 'manual_data_entered.html')

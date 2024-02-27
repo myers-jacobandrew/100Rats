@@ -1,25 +1,21 @@
 import re
+from typing import Dict, Union, List, Tuple
 
 class StatBlockParser:
-    def __init__(self):
+    def __init__(self) -> None:
         pass
     
-    def parse_stat_block(self, stat_block):
-        parsed_stat_block = {}
+    def parse_stat_block(self, stat_block: str) -> Dict[str, Union[str, Dict[str, str], List[Dict[str, str]]]]:
+        parsed_stat_block: Dict[str, Union[str, Dict[str, str], List[Dict[str, str]]]] = {}
         parsed_stat_block["Name"] = self.extract_name(stat_block)
         parsed_stat_block.update(self.extract_size_alignment(stat_block))
         parsed_stat_block["Armor Class"] = self.extract_armor_class(stat_block)
         parsed_stat_block.update(self.extract_hit_points(stat_block))
-        
-        # Extract original speed and add it to parsed_stat_block
         parsed_stat_block["Speed"] = self.extract_speed(stat_block)
-        
-        # Extract speeds and update parsed_stat_block
         speed_text = parsed_stat_block["Speed"]
         speeds = self.extract_speeds(speed_text)
         for speed_type, speed_value in speeds.items():
             parsed_stat_block[f"{speed_type.capitalize()} Speed"] = speed_value
-        
         parsed_stat_block.update(self.extract_abilities(stat_block))
         parsed_stat_block["Senses"] = self.extract_senses(stat_block)
         parsed_stat_block.update(self.extract_challenge_rating(stat_block))
@@ -27,18 +23,14 @@ class StatBlockParser:
         actions, legendary_actions, legendary_actions_count = self.extract_actions(stat_block)
         parsed_stat_block["Actions"] = actions
         parsed_stat_block["Legendary Actions"] = legendary_actions if legendary_actions is not None else []
-        
-        
-        
         return parsed_stat_block
 
-
-    def extract_name(self, stat_block):
+    def extract_name(self, stat_block: str) -> Union[str, None]:
         name_pattern = re.compile(r'^\s*\[?([\w\s]+)\]?\n', re.MULTILINE)
         name_match = re.search(name_pattern, stat_block)
         return name_match.group(1).strip() if name_match else None
 
-    def extract_size_alignment(self, stat_block):
+    def extract_size_alignment(self, stat_block: str) -> Dict[str, str]:
         size_alignment_pattern = re.compile(r'^(.+), (.+)\n', re.MULTILINE)
         size_alignment_match = re.search(size_alignment_pattern, stat_block)
         if size_alignment_match:
@@ -50,104 +42,78 @@ class StatBlockParser:
                 return {"Size": size, "Alignment": alignment.strip()}
         return {}
 
-    def extract_armor_class(self, stat_block):
+    def extract_armor_class(self, stat_block: str) -> Union[int, None]:
         armor_class_pattern = re.compile(r'Armor Class (\d+)', re.MULTILINE)
         armor_class_match = re.search(armor_class_pattern, stat_block)
         return int(armor_class_match.group(1)) if armor_class_match else None
 
-    def extract_hit_points(self, stat_block):
+    def extract_hit_points(self, stat_block: str) -> Dict[str, str]:
         hit_points_pattern = re.compile(r'Hit Points (\d+) \((.+)\)', re.MULTILINE)
         hit_points_match = re.search(hit_points_pattern, stat_block)
         if hit_points_match:
             return {"Hit Points": hit_points_match.group(1), "Hit Dice": hit_points_match.group(2)}
         return {}
-    
-    def extract_speed(self, stat_block):
+
+    def extract_speed(self, stat_block: str) -> Union[str, None]:
         speed_pattern = re.compile(r'Speed (.+?)\n', re.MULTILINE)
         speed_match = re.search(speed_pattern, stat_block)
         return speed_match.group(1) if speed_match else None
 
-    def extract_speeds(self, speed_text):
-        speeds = {}
-        
-        # Regular expression pattern to match speed values and types
+    def extract_speeds(self, speed_text: str) -> Dict[str, int]:
+        speeds: Dict[str, int] = {}
         speed_pattern = r'(\d+)\s*ft\.|\b(\w+)\b\s*(\d*)\s*ft\.'
-        
-        # Find all matches of speed pattern in the text
         matches = re.findall(speed_pattern, speed_text)
-        
-        # Iterate through matches and extract speed values
         for match in matches:
-            if match[0]:  # If there's a match for numeric speed value
+            if match[0]:
                 speed_value = int(match[0])
-                speed_type = 'land'  # Default speed type is land
-            else:  # If there's a match for non-numeric speed type
+                speed_type = 'land'
+            else:
                 speed_value = int(match[2])
-                speed_type = match[1]  # Set speed type
-            
-            speeds[speed_type] = speed_value  # Add speed to dictionary
-        
+                speed_type = match[1]
+            speeds[speed_type] = speed_value
         return speeds
 
-    def expand_speed(extract_speed_function):
-        # Call extract_speed function to get speed value
-        speed_value = extract_speed_function()
-#        print(speed_value)
-        return extract_speeds(speed_value) 
-
-    def extract_abilities(self, stat_block):
+    def extract_abilities(self, stat_block: str) -> Dict[str, Dict[str, Union[int, Tuple[int, int]]]]:
         abilities_pattern = re.compile(r'(\w{3})\s(\-?\d+) \(([\+\-]?\d+)\)', re.MULTILINE)
         abilities_matches = re.findall(abilities_pattern, stat_block)
         if abilities_matches:
             return {"Abilities": {ability[0]: (int(ability[1]), int(ability[2])) for ability in abilities_matches}}
         return {}
 
-    def extract_senses(self, stat_block):
+    def extract_senses(self, stat_block: str) -> Union[str, None]:
         senses_pattern = re.compile(r'Senses (.+)', re.MULTILINE)
         senses_match = re.search(senses_pattern, stat_block)
         return senses_match.group(1) if senses_match else None
 
-    def extract_challenge_rating(self, stat_block):
+    def extract_challenge_rating(self, stat_block: str) -> Dict[str, str]:
         challenge_rating_pattern = re.compile(r'Challenge (\d+) \((\d+) XP\)', re.MULTILINE)
         challenge_rating_match = re.search(challenge_rating_pattern, stat_block)
         if challenge_rating_match:
             return {"Challenge Rating": challenge_rating_match.group(1), "Experience Points": challenge_rating_match.group(2)}
         return {}
 
-    def extract_special_abilities(self, stat_block):
-        special_abilities = {}
-        
+    def extract_special_abilities(self, stat_block: str) -> Dict[str, str]:
+        special_abilities: Dict[str, str] = {}
         special_abilities_pattern = re.compile(r' XP\)\n(.*?)(?=\n\nActions\n|\Z)', re.DOTALL)
         special_abilities_match = re.search(special_abilities_pattern, stat_block)
-        
         if special_abilities_match:
-            # Extract the matched text
             special_abilities_text = special_abilities_match.group(1)
-            
-            # Use a regex to capture everything before "Actions"
             special_abilities_text_before_actions = re.search(r'(.+?)(?=\n\n\s*Actions\n|\Z)', special_abilities_text, re.DOTALL)
-            
             if special_abilities_text_before_actions:
-                # Use the captured text before "Actions"
                 cleaned_special_abilities = special_abilities_text_before_actions.group(1).strip()
             else:
-                # If "Actions" is not found, use the entire extracted text
                 cleaned_special_abilities = special_abilities_text.strip()
-            
-            # Return the cleaned special abilities
             return {"Special Abilities": cleaned_special_abilities}
-        
         return {}
-        
-    def extract_actions(self, stat_block):
-        actions = []
-        legendary_actions = []
-        legendary_action_count = 0
 
-        # Extract the actions section
+    def extract_actions(self, stat_block: str) -> Tuple[List[Dict[str, str]], List[Dict[str, str]], int]:
+        actions: List[Dict[str, str]] = []
+        legendary_actions: List[Dict[str, str]] = []
+        legendary_action_count: int = 0
+
         actions_section = re.findall(r"Actions\n(?:\s+)(.*?)(?:Legendary Actions|\Z)", stat_block, re.DOTALL)
         if actions_section:
-            action_text = actions_section[0].strip()  # Extracting actions text
+            action_text = actions_section[0].strip()
             action_matches = re.findall(r"^\s*([A-Za-z\s]+)\. (.*?)(?=\n\s*[A-Za-z\s]+\. |\n\n|\Z)", action_text, re.DOTALL | re.MULTILINE)
             for action_match in action_matches:
                 actions.append({
@@ -155,50 +121,37 @@ class StatBlockParser:
                     "Action Description": action_match[1].strip()
                 })
 
-        # Extract legendary actions if they exist
         if "Legendary Actions" in stat_block:
-            legendary_text = stat_block.split("Legendary Actions")[1].strip()  # Extract legendary actions text
-            legendary_actions, legendary_action_count = self.extract_legendary_actions(legendary_text)  # Extract legendary actions
-#            print("legendary_text:"+legendary_text)
-            
-        # Ensure that actions and legendary_actions are always lists
+            legendary_text = stat_block.split("Legendary Actions")[1].strip()
+            legendary_actions, legendary_action_count = self.extract_legendary_actions(legendary_text)
+
         return actions, legendary_actions, legendary_action_count
 
-    def extract_legendary_actions(self, text):
-        legendary_actions = []
-        legendary_action_count = 0
+    def extract_legendary_actions(self, text: str) -> Tuple[List[Dict[str, str]], int]:
+        legendary_actions: List[Dict[str, str]] = []
+        legendary_action_count: int = 0
 
-        # Extract the count of legendary actions
         action_count_match = re.search(r"(\d+) legendary actions", text)
         if action_count_match:
             legendary_action_count = int(action_count_match.group(1))
 
-        # Find the index where legendary actions start using regex
         action_start_match = re.search(r"\n\n", text)
         if action_start_match:
             start_index = action_start_match.end()
-            legendary_actions_text = text[start_index:].strip()
+            legendary_actions_text = text[start_index:].strip()  # Define legendary_actions_text here
 
-        # Remove leading/trailing whitespace
-        legendary_actions_text = legendary_actions_text.strip()
-
-        # Split legendary actions by newline followed by an indented line,
-        # capturing cost information within parentheses (optional)
         action_blocks = re.findall(
             r"^([\w\s]+)\s*(?:\(([^)]+)\)\.\s)?(.*?)(?:\n|$)",
-            legendary_actions_text,
+            legendary_actions_text,  # Use legendary_actions_text instead of the undefined variable legendary_actions_text_before_actions
             re.DOTALL | re.MULTILINE,
         )
 
-        # Append all legendary actions
         for action_name, cost, action_description in action_blocks:
-            # Combine action name and cost if present, otherwise use only action name
             if cost:
                 action_name = f"{action_name.strip()} (Cost {cost.strip()} Actions)"
             else:
                 action_name = action_name.strip()
 
-            # Split the description at the newline character if present
             if '\n' in action_description:
                 action_description, additional_description = action_description.split('\n', 1)
                 legendary_actions.append({"Legendary Action": action_name, "Legendary Action Description": action_description.strip()})
@@ -211,7 +164,6 @@ class StatBlockParser:
 testing = True
 
 if testing:
-    # Test blocks
     test_blocks = [
         """
         Goblin
@@ -331,21 +283,15 @@ if testing:
 
     """,
     ]
-
-
-    # Instantiate the StatBlockParser
-    parser = StatBlockParser()
-
-    # Loop through each test block
+    
+if __name__ == "__main__":
+    stat_block_parser = StatBlockParser()  # Create an instance of StatBlockParser
     for i, test_block in enumerate(test_blocks, start=1):
         print(f"Test Block {i}:")
         print("-" * 20)
-        
-        # Call the parse_stat_block method of the parser object with the current test block
-        parsed_result = parser.parse_stat_block(test_block)
-        print()
-        print("-" * 20)
-        # Print the parsed result
+        parsed_result = stat_block_parser.parse_stat_block(test_block)  # Call parse_stat_block method on the instance
         print("Parsed Result:")
-        print(parsed_result)
+        for key, value in parsed_result.items():
+            print(f"{key}: {value}")
+        print("-" * 20)
         print()
