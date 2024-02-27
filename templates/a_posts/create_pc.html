@@ -1,0 +1,45 @@
+{% extends 'layouts/b.html' %}
+
+{% block content %}
+
+  <h1 class="text-center text-4xl mb-6">Create a PC</h1>
+  <p>Either input your values manually or upload a pdf</p>
+  <div id="step1">
+    <div class="text-center">
+      <button type="button" onclick="showManualForm()" class="button-half" style="background-color: #F7F8FA; color: #1F2937; border-color: #F7F8FA;">Manual Input</button>
+      <span style="color: #1F2937;">or</span>
+      <button type="button" onclick="showAutomaticForm()" class="button-half" style="background-color: #F7F8FA; color: #1F2937; border-color: #F7F8FA;">Automatic Input</button>
+    </div>
+  </div>
+
+  <div id="step2" style="display: none;"></div>
+
+  <script>
+function showManualForm() {
+  document.getElementById("step1").style.display = "none";
+  fetch("{% url 'manual-pc-input-form' %}")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("step2").innerHTML = data;
+      document.getElementById("step2").style.display = "block"; 
+    });
+  document.getElementById("input_method").value = "manual";
+}
+
+function showAutomaticForm() {
+  document.getElementById("step1").style.display = "none";
+  fetch("{% url 'automatic-pc-input-form' %}")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("step2").innerHTML = data;
+      document.getElementById("step2").style.display = "block";   
+    });
+  document.getElementById("input_method").value = "automatic";
+}
+  </script>
+
+
+  <div class="mt-6 text-center">
+    (centered text)
+  </div>
+  {% endblock %}

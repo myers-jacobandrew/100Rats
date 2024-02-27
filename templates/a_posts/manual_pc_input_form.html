@@ -1,0 +1,164 @@
+<h2 class="font2 text-center text-2xl mb-4" style="grid-column: span 2;">Manual Input</h2>
+<p style="grid-column: span 2;">This form is a bit comprehensive and it's recommended you try <a href="automatic_input_form_pc.html">importing a pdf</a> if you're able.</p>
+<form id="manual-pc-form" action="{% url 'create-pc' %}" method="post" class="max-w-md mx-auto bg-white p-6 rounded-md shadow-md" hx-post="{% url 'create-pc' %}" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    {% csrf_token %}
+    {{ form.non_field_errors }} 
+
+    <input type="hidden" id="input_method" name="input_method" value="manual">
+
+    <!-- Basic Info -->
+    <div style="grid-column: span 2;">
+        <h3>Basic Info</h3>
+        <p>
+            <label for="id_name">Character Name:</label>
+            <input type="text" name="name" required>
+        </p>
+        <p>
+            <label for="id_player_name">Player Name:</label>
+            <input type="text" name="player_name" required>
+        </p>
+        <p>
+            <label for="id_size">Size:</label>
+            <input type="text" name="size" required>
+        </p>
+        <p>
+            <label for="id_creature_type">Creature Type:</label>
+            <input type="text" name="creature_type" required>
+        </p>
+        <p>
+            <label for="id_alignment">Alignment:</label>
+            <input type="text" name="alignment" required>
+        </p>
+        <p>
+            <label for="id_armor_class">Armor Class:</label>
+            <input type="number" name="armor_class" required>
+        </p>
+        <p>
+            <label for="id_hit_points">Hit Points:</label>
+            <input type="number" name="hit_points" required>
+        </p>
+        <p>
+            <label for="id_speed">Speed:</label>
+            <input type="text" name="speed" required>
+        </p>
+    </div>
+
+    <!-- Abilities -->
+    <div>
+        <h3>Abilities</h3>
+        <p>
+            <label for="id_strength">Strength:</label>
+            <input type="number" name="strength" required>
+        </p>
+        <p>
+            <label for="id_dexterity">Dexterity:</label>
+            <input type="number" name="dexterity" required>
+        </p>
+        <p>
+            <label for="id_constitution">Constitution:</label>
+            <input type="number" name="constitution" required>
+        </p>
+        <p>
+            <label for="id_intelligence">Intelligence:</label>
+            <input type="number" name="intelligence" required>
+        </p>
+        <p>
+            <label for="id_wisdom">Wisdom:</label>
+            <input type="number" name="wisdom" required>
+        </p>
+        <p>
+            <label for="id_charisma">Charisma:</label>
+            <input type="number" name="charisma" required>
+        </p>
+    </div>
+
+    <!-- Proficiency and Inspiration -->
+    <div>
+        <h3>Proficiency and Inspiration</h3>
+        <p>
+            <label for="id_proficiency_bonus">Proficiency Bonus:</label>
+            <input type="number" name="proficiency_bonus" required>
+        </p>
+        <p>
+            <label for="id_inspiration">Inspiration:</label>
+            <input type="checkbox" name="inspiration">
+        </p>
+    </div>
+
+    <!-- Features, Equipment, and Inventory -->
+    <div>
+        <h3>Features, Equipment, and Inventory</h3>
+        <p>
+            <label for="id_features_and_traits">Features & Traits:</label>
+            <textarea name="features_and_traits"></textarea>
+        </p>
+        <p>
+            <label for="id_equipment">Equipment:</label>
+            <textarea name="equipment"></textarea>
+        </p>
+        <p>
+            <label for="id_inventory">Inventory:</label>
+            <textarea name="inventory"></textarea>
+        </p>
+    </div>
+
+    <!-- Actions -->
+    <div>
+        <h3>Actions</h3>
+        <p>
+            <label for="id_actions">Actions:</label>
+            <textarea name="actions"></textarea>
+        </p>
+        <p>
+            <label for="id_bonus_actions">Bonus Actions:</label>
+            <textarea name="bonus_actions"></textarea>
+        </p>
+        <p>
+            <label for="id_reactions">Reactions:</label>
+            <textarea name="reactions"></textarea>
+        </p>
+    </div>
+
+    <!-- Initiative and Passive Perception -->
+    <div>
+        <h3>Initiative and Passive Perception</h3>
+        <p>
+            <label for="id_initiative">Initiative:</label>
+            <input type="number" name="initiative" required>
+        </p>
+        <p>
+            <label for="id_passive_perception">Passive Perception:</label>
+            <input type="number" name="passive_perception" required>
+        </p>
+    </div>
+
+    <!-- Saving Throws, Skills, Languages, Background, and Experience -->
+    <div style="grid-column: span 2;">
+        <h3>Saving Throws, Skills, Languages, Background, and Experience</h3>
+        <p>
+            <label for="id_saving_throws">Saving Throws:</label>
+            <textarea name="saving_throws"></textarea>
+        </p>
+        <p>
+            <label for="id_skills">Skills:</label>
+            <textarea name="skills"></textarea>
+        </p>
+        <p>
+            <label for="id_languages">Languages:</label>
+            <textarea name="languages"></textarea>
+        </p>
+        <p>
+            <label for="id_background">Background:</label>
+            <input type="text" name="background">
+        </p>
+        <p>
+            <label for="id_experience_points">Experience Points:</label>
+            <input type="number" name="experience_points">
+        </p>
+    </div>
+
+    <button type="submit" class="mt-1" style="grid-column: span 2;">Create PC</button>
+    <!--<button type="submit" name="create_and_add_another" value="true" class="mt-1">Create and Add Another</button>-->
+    <a class="button secondaryAction ml-1" href="" value="Back" style="grid-column: span 2;">Back</a>
+
+</form>

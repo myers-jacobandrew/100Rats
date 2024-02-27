@@ -1,0 +1,18 @@
+<h2 class="font2 text-center text-2xl mb-4">Automatic Input Form</h2>
+
+<form id="automatic-pc-input-form" action="{% url 'create-pc' %}" method="post" class="max-w-md mx-auto bg-white p-6 rounded-md shadow-md" hx-post="{% url 'create-pc' %}">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  <input type="hidden" id="input_method" name="input_method" value="automatic">
+
+    
+    <label for="raw-text-field">Upload your PDF:</label>
+<!--    <textarea id="raw-text-field" name="raw_stat_block" rows="5" cols="50"></textarea> -->
+
+    <button type="submit" class="mt-1">Create PC</button>
+    <!--<button type="submit" name="create_and_add_another" value="true" class="mt-1">Create and Add Another</button>-->
+    <a class="button secondaryAction ml-1" href="">Back</a>
+
+</form>
+
+
