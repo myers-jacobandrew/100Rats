@@ -26,9 +26,7 @@ venv/
 /templates/a_posts/post_create.html
 /a_core/scripts/legendary_action_parse.py
 
-# pc-race-data
-/a_core/pc_race_data/*
-a_core\pc_race_data\*
+
 
 # migrations
 /a_posts/migrations
@@ -36,3 +34,7 @@ a_posts\migrations\*
 
 # backup file
 a_posts/backup
+
+
+# pc-race-data
+a_core/static/pc_race_data/*
