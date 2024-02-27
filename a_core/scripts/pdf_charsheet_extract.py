@@ -1,4 +1,5 @@
 import pdfplumber
+import re
 
 def extract_text_from_pdf(file_path):
     with pdfplumber.open(file_path) as pdf:
@@ -25,13 +26,37 @@ def process_pdf_data(pdf_text):
         # Include other extracted fields
     }
 
-def save_to_database(data):
-    # Create or update the PlayerCharacter object in the database
-    player_character = PlayerCharacter.objects.create(**data)
-    return player_character
+def extract_name(text):
+    name_pattern = re.compile(r'Name:\s*(.*)', re.IGNORECASE)
+    match = name_pattern.search(text)
+    if match:
+        return match.group(1).strip()
+    return None
+
+def extract_race(text):
+    race_pattern = re.compile(r'Race:\s*(.*)', re.IGNORECASE)
+    match = race_pattern.search(text)
+    if match:
+        return match.group(1).strip()
+    return None
+
+def extract_class(text):
+    class_pattern = re.compile(r'Class:\s*(.*)', re.IGNORECASE)
+    match = class_pattern.search(text)
+    if match:
+        return match.group(1).strip()
+    return None
+
+def extract_level(text):
+    level_pattern = re.compile(r'Level:\s*(.*)', re.IGNORECASE)
+    match = level_pattern.search(text)
+    if match:
+        return match.group(1).strip()
+    return None
+
 
 # Example usage:
 pdf_file_path = "/path/to/character_sheet.pdf"
 pdf_text = extract_text_from_pdf(pdf_file_path)
 character_data = process_pdf_data(pdf_text)
-player_character = save_to_database(character_data)
+print(character_data)
