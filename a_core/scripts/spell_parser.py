@@ -69,6 +69,7 @@ spell_descriptions = [
     """
 ]
 
-for description in spell_descriptions:
-    spell_type, effect = parse_spell_description(description)
-    print(f"Spell Type: {spell_type}, Effect: {effect}")
+if __name__ == "__main__":
+    for description in spell_descriptions:
+        spell_type, effect = parse_spell_description(description)
+        print(f"Spell Type: {spell_type}, Effect: {effect}")
